@@ -6,13 +6,13 @@ import markdown2
 import random
 
 def index(request):
-    """نمایش لیست مقالات"""
+    """Show list of articles"""
     return render(request, "encyclopedia/index.html", {
         "entries": util.list_entries()
     })
 
 def entry(request, title):
-    """نمایش یک مقاله مشخص"""
+    """Show a specific article"""
     content = util.get_entry(title)
     if content is None:
         return render(request, "encyclopedia/error.html", {
@@ -24,7 +24,7 @@ def entry(request, title):
     })
 
 def search(request):
-    """جستجوی مقاله"""
+    """Search for article"""
     query = request.GET.get('q', '').strip()
     if not query:
         return redirect("index")
@@ -32,7 +32,7 @@ def search(request):
     entries = util.list_entries()
     matches = [entry for entry in entries if query.lower() in entry.lower()]
 
-    # اگر مقاله دقیقا با عنوان جستجو برابر بود، هدایت به صفحه مقاله
+    # If the article exactly matches the search title, redirect to the article page.
     if query.lower() in (entry.lower() for entry in entries):
         return redirect(reverse("entry", kwargs={"title": query}))
 
@@ -43,12 +43,12 @@ def search(request):
 
 
 def new_page(request):
-    """ایجاد یک مقاله جدید"""
+    """Create a new article"""
     if request.method == "POST":
         title = request.POST.get("title").strip()
         content = request.POST.get("content").strip()
 
-        # بررسی اینکه مقاله‌ای با این عنوان وجود دارد یا نه
+        # Check if an article with this title exists.
         if util.get_entry(title):
             return render(request, "encyclopedia/error.html", {
                 "message": "An entry with this title already exists."
@@ -62,10 +62,10 @@ def new_page(request):
 
 
 def random_page(request):
-    """انتخاب یک مقاله تصادفی و نمایش آن"""
+    """Select a random article and display it."""
     entries = util.list_entries()
     if not entries:
-        return redirect("index")  # اگر مقاله‌ای وجود ندارد، برگردد به صفحه اصلی
+        return redirect("index")  # If there is no article, return to the main page.
     
     random_entry = random.choice(entries)
     return redirect(reverse("entry", kwargs={"title": random_entry}))
@@ -73,7 +73,7 @@ def random_page(request):
 
 
 def edit_page(request, title):
-    """ویرایش یک مقاله"""
+    """Edit an article"""
     content = util.get_entry(title)
     if content is None:
         return render(request, "encyclopedia/error.html", {

@@ -18,7 +18,7 @@ from django.urls import path, include
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path("", include("encyclopedia.urls")),  # این مسیر، صفحه اصلی را متصل می‌کند
+    path("", include("encyclopedia.urls")),  # This path connects the home page.
 ]
 
 
